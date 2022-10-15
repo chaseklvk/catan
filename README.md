@@ -18,6 +18,7 @@ python3 main.py
 * Main game loop
 * Tile connection
 * Cities and settlements
+* Game strategies
 
 ## Notes
 ### Generating the board
