@@ -1,6 +1,7 @@
 import random
-import networkx as nx
-import matplotlib.pyplot as plt
+import os
+from pyvis.network import Network
+
 from .tile import Tile
 
 class Board:
@@ -31,25 +32,33 @@ class Board:
 		self._game_tiles[0].connect_tile(self._game_tiles[6])
 
 	def draw_network(self):
-		G = nx.Graph()
+		net = Network()
 
-		# Get all the edges
-		edge_set = set()
+		space_id_to_int = lambda x: (int(str(x)[0]) * 6) + int(str(x)[1])
+
+		node_set = set()
+		for tile in self._game_tiles:
+			for node in tile.ring():
+				int_id = space_id_to_int(node.space_id())
+				if int_id not in node_set:
+					node_set.add(int_id)
+					net.add_node(int_id, label=node.space_id())
 
 		for tile in self._game_tiles:
 			for node in tile.ring():
+				node_int_id = space_id_to_int(node.space_id())
 				for neighbor in node.neighbors():
-					edge_set.add((node.space_id(), neighbor.space_id()))
+					neighbor_int_id = space_id_to_int(neighbor.space_id())
+					net.add_edge(node_int_id, neighbor_int_id)
 
-		print(f"Number of edges: {len(edge_set)}")
 
-		for edge in edge_set:
-			G.add_edge(edge[0], edge[1])
+		
+		## 00 01 02 03
 
-		subax1 = plt.subplot(121)
-		nx.draw(G, with_labels=True, font_weight='bold')
+		if not os.path.exists('./out'):
+			os.makedirs('./out')
 
-		plt.show()
+		net.show('out/board.html')
 
 
 
