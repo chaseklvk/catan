@@ -51,10 +51,6 @@ class Board:
 					neighbor_int_id = space_id_to_int(neighbor.space_id())
 					net.add_edge(node_int_id, neighbor_int_id)
 
-
-		
-		## 00 01 02 03
-
 		if not os.path.exists('./out'):
 			os.makedirs('./out')
 
