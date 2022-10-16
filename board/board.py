@@ -32,7 +32,7 @@ class Board:
 		self._game_tiles[0].connect_tile(self._game_tiles[6])
 
 	def draw_network(self):
-		net = Network()
+		net = Network(height="100vh")
 
 		space_id_to_int = lambda x: (int(str(x)[0]) * 6) + int(str(x)[1])
 
