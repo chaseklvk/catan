@@ -38,10 +38,26 @@ class Tile:
 		return self._ring
 	
 	def next_open_side(self):
-		start_index = self._closed_sides % 6 
-		end_index = (self._closed_sides + 1) % 6
+		# No open space
+		if self._closed_sides == 6: return (-1, None), (-1, None)
 
-		return (start_index, self._ring[start_index]), (end_index, self._ring[end_index])
+		# Select the first open side with 3 neighbors and next
+		# node with 2 neighbors
+		for i, space in enumerate(self._ring):
+			if space.num_neighbors() == 3 and self._ring[(i + 1) % 6].num_neighbors() == 2:
+				return (i, space), ((i + 1) % 6, self._ring[(i + 1) % 6])
+		
+		# If that condition doesnt exist, we either have no connections or 5
+		if self._closed_sides == 5:
+			# Find the two rings with only 2 connected tiles
+			nodes = []
+			for i, space in enumerate(self._ring):
+				if space.num_tiles() == 2:
+					nodes.append((i, space))
+			
+			return nodes[0], nodes[1]
+		else:
+			return (0, self._ring[0]), (1, self._ring[1])
 
 	def set_space(self, space, i):
 		self._ring[i] = space
@@ -50,7 +66,7 @@ class Tile:
 		# Select the next open side
 		(this_start_index, this_start), (this_end_index, this_end) = self.next_open_side()
 		(other_start_index, other_start), (other_end_index, other_end) = tile.next_open_side()
-		
+
 		# Connect the sides by consolidating the spaces
 		# and drawing the right edges... done by:
 		# 1. Set the neighbors of the other side to be the neighbors of this side (except the other spaces themselves)
@@ -80,6 +96,10 @@ class Tile:
 		this_start.reduce_edges()
 		this_end.reduce_edges()
 
+		# Add tiles
+		this_start.add_tile(tile)
+		this_end.add_tile(tile)
+
 		# We've closed a side
 		self.close_side()
 		tile.close_side()
@@ -88,4 +108,4 @@ class Tile:
 		self._closed_sides += 1
 
 	def __repr__(self):
-		return self.tile_id()
+		return f"ID: {self.tile_id()}, Biome: {self._biome}, Resouce: {self._resource}"

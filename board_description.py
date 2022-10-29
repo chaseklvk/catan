@@ -54,4 +54,4 @@ board_simple = [
 	}
 ]
 
-board_description = board_simple
+board_description = board_regular

@@ -23,7 +23,7 @@ class Board:
 		# Must have >= 7 tiles and in multiples of 6
 		assert(len(self._game_tiles) >= 7 and len(self._game_tiles) % 6 == 1)
 
-		# Connect tiles
+		# Connect tiles (inner ring)
 		self._game_tiles[0].connect_tile(self._game_tiles[1])
 		self._game_tiles[0].connect_tile(self._game_tiles[2])
 		self._game_tiles[0].connect_tile(self._game_tiles[3])
@@ -31,16 +31,37 @@ class Board:
 		self._game_tiles[0].connect_tile(self._game_tiles[5])
 		self._game_tiles[0].connect_tile(self._game_tiles[6])
 
+		# Connect tiles (outer ring)
+		self._game_tiles[1].connect_tile(self._game_tiles[7])
+		self._game_tiles[1].connect_tile(self._game_tiles[8])
+		self._game_tiles[1].connect_tile(self._game_tiles[9])
+		self._game_tiles[2].connect_tile(self._game_tiles[10])
+		self._game_tiles[2].connect_tile(self._game_tiles[11])
+		self._game_tiles[3].connect_tile(self._game_tiles[12])
+		self._game_tiles[3].connect_tile(self._game_tiles[13])
+		self._game_tiles[4].connect_tile(self._game_tiles[14])
+		self._game_tiles[4].connect_tile(self._game_tiles[15])
+		self._game_tiles[5].connect_tile(self._game_tiles[16])
+		self._game_tiles[5].connect_tile(self._game_tiles[17])
+		self._game_tiles[6].connect_tile(self._game_tiles[18])
+
+		for tile in self._game_tiles: print(tile)
+
 	def draw_network(self):
 		net = Network(height="100vh")
 
-		space_id_to_int = lambda x: (int(str(x)[0]) * 6) + int(str(x)[1])
+		def space_id_to_int(x):
+			if len(x) == 2:
+				return (int(str(x)[0]) * 6) + int(str(x)[1])
+			elif len(x) == 3:
+				return (int(str(x)[0:2]) * 6) + int(str(x)[2])
 
 		node_set = set()
 		for tile in self._game_tiles:
 			for node in tile.ring():
 				int_id = space_id_to_int(node.space_id())
 				if int_id not in node_set:
+					print(node)
 					node_set.add(int_id)
 					net.add_node(int_id, label=node.space_id())
 
